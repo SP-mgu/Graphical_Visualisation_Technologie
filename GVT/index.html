@@ -1,0 +1,52 @@
+<!DOCTYPE html> <!--START-->
+<html lang="de"> <!--EA1 - Interaktiv animierte Schreibe-->
+<head> 
+    <meta charset="UTF-8"> <!--Hier wird der Zeichensatz für das Dokument festgelegt-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"><!--Dies gestaltet die Webseite responsiv auf den Endgeräten-->
+    <title>Animierte Scheibe von Maxi Gutmann</title><!--Das ist der Titel des Dokumentes-->
+    <link rel="stylesheet" href="styles.css"><!--An dieser Stelle wird die CSS-Datei in die HTML-Datei eingebunden-->
+</head>
+<body>
+    <header><!--Hier wird die Kopfzeile definiert mit dem Titel und meinem Namen-->
+        <h1>EA 1 - Interaktiv animierte Scheibe</h1>
+        <p>Ein Projekt von Maxi Gutmann</p>
+    </header>
+
+    <main>
+        <!--Hier sind ersteinmal ein paar allgemeine Hinweise für den Nutzer der Webseite-->
+        <p>Um den Donut nach links oder rechts zu drehen, drücken Sie bitte den jeweilligen Button.</p>
+        <p>Mit Druck auf der Taste A/a dreht sich der Donut kontinuierlich nach links. Bei erneutem Druck auf Taste A stoppt die Drehung.</p>
+        <!--AN dieser Stelle wird der Container für den Donut definiert-->
+        <div class="donut-container">
+            <img id="donut" src="images/image0.png" alt="Hier sehen Sie einen nach rechts oder links drehenden Donut mit Blumenmuster">
+        </div>
+        <!--In den Codezeilen wird die Gradanzeige der aktuellen Neigung des Donuts festgelegt-->
+        <p>Aktuelle Position in Grad:</p>
+        <div id="degree-display">0°</div> 
+        <!--Hier werden die Buttons für die Drehung des Donuts nach links oder rechts definiert-->
+        <div class="button-container">
+         <button onclick="rotateLeft()">Links drehen</button>
+         <button onclick="rotateRight()">Rechts drehen</button>
+        </div>
+        <br> <!--Hier iat einfach ein Freiraum-->
+        <br>
+        <br>
+        <!--In diesem Abschnitt wird der Elefant definiert-->
+        <h2>Der schwingende Elefant</h2>
+        <p>Zum Abschluss ist hier noch ein kleiner Elefant, der automatisch seinen Rüssel bewegt.</p>
+        <div class="elefant-container"><!--Hier wird ebenfalls ein Container definiert, nur diesmal für den Elefanten-->
+            <img id="schwingender-elefant" src="images/elephant0.png" alt="Hier hebt ein Elefant seinen Rüssel und sprüht Wasser">
+        </div>
+    </main>
+
+    <footer><!--Im Footer befinden sich die Aufgabenstellung sowie Angaben zu den verwendeten Ressourcen-->
+        <h3>Aufgabenstellung:</h3>
+        <p>Implementieren Sie eine sich drehende 2D-Scheibe aus Einzelbildern, welche Sie mit JavaScript laden und in einem <img> Image-Element zeigen (nicht im Canvas). Die Einzelbilder sollen, ähnlich wie bei einer Sprite-Sheet-Animation oder einem Animationsfilm, so ausgetauscht und eingeblendet werden, dass visuell der Eindruck einer Rotation entsteht. Auf jedem Einzelbild ist ein Rotationszustand der Scheibe zu sehen, z. B.: 0°, 15°, 30°, ...  .</p>
+        <p>Modul Graphical Visualisation Technologies</p>
+        <p>Verwendete Ressourcen: Adobe Photoshop, Adobe Stock, w3school, Bücherreihe "for dummies" für HTML/CSS & JavaScript</p>
+        <p>Erstellt am 12.10.2023</p>
+    </footer>
+
+    <script src="script.js"></script><!--Hier wird die JavaScript-Datei in die HTML-Datei eingebunden-->
+</body>
+</html> <!--END-->

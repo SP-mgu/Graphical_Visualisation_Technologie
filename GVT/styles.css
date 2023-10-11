@@ -1,0 +1,72 @@
+/* START - Allgemeines Styling */
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+header, main, footer {
+    padding: 20px;
+    text-align: center;
+}
+
+h1, h2 {
+    color: #e55b76; 
+    margin-top: 20px;
+}
+
+/* Styling des Donuts */
+.donut-container {
+    display: inline-block;
+    margin: 20px;
+}
+
+#donut {
+    width: 500px; 
+    height: auto;
+}
+
+#degree-display {
+    font-size: 24px;
+    text-align: center;
+    margin-top: 10px;
+    }
+
+/* Styling für Buttons */
+button {
+    padding: 10px 20px;
+    margin: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #f5cccc;
+    border: #dd335a;
+}
+
+button:hover {
+    background-color: #e55b76;
+}
+
+.button-container {
+    text-align: center;
+    margin-top: 20px;
+    
+}
+/* Styling des Elefanten */
+.elefant-container {
+    width: 600px; 
+    margin: auto;
+    margin-top: 50px;
+}
+
+#schwingender-elefant {
+    width: 100%;
+    height: auto;
+}
+
+/* Footer Styling */
+footer {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #f5cccc;
+} 
+/* END */
