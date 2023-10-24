@@ -1,0 +1,176 @@
+<!DOCTYPE html> <!--Start-->
+<html lang="de"> <!--EA2 - 2D Geometrie aus Linien-->
+<head>
+    <meta charset="UTF-8"> <!--Hier wird der Zeichensatz für das Dokument festgelegt-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"><!--Dies gestaltet die Webseite responsiv auf den Endgeräten-->
+    <title>EA 2 - 2D Geometrie aus Linien</title><!--Das ist der Titel des Dokumentes-->
+    <style>/*An dieser Stelle wird die CSS-Datei in die HTML-Datei eingebunden */
+        /* START - Allgemeines Styling */
+        body, html {
+        margin: 0;
+        padding: 0;
+        height: 100%; 
+        font-family: Arial, sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        }
+        /* Styling für Header, Main, Footer und Canvas */
+        header, main, footer, canvas {
+           padding: 20px;
+           text-align: center;
+        }
+        /* Styling für die Überschriften */
+        h1, h2 {
+             color: #e55b76; 
+             margin-top: 20px;
+        }
+        /* Hier wird der Text im Absatz zentriert */
+        p {
+            text-align: center;
+            margin-top: 20px;
+        } 
+        /* Styling für Canvas */
+        canvas {
+            border: 5px solid #f5cccc;
+            margin-top: 20px;
+        }
+        /* Footer Styling */
+        footer {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f5cccc;
+        } 
+        /* END */ 
+    </style> <!--CSS zu Ende-->
+</head>
+<body>
+    <header><!--Hier wird die Kopfzeile definiert mit dem Titel und meinem Namen-->
+        <br>
+        <br>
+        <br>
+        <h1>EA 2 - 2D Geometrie aus Linien mit WebGL</h1>
+        <p>Ein Projekt von Maxi Gutmann</p>
+    </header>
+    <!-- Hier wird das Canvas zum Zeichnen der 2D-Geometrie initialisiert -->
+    <canvas id="Vieleck" width="500" height="500"></canvas>
+    
+    <!-- Hier ist eine kurze Beschreibung des Inhaltes, welches auf der Webseite gesehen werden kann -->
+    <p>
+        Diese 2D-Geometrie wurde mit WebGL erstellt und besteht aus Linien, die durch Vertices verbunden sind, um ein komplexes Vieleck zu formen. Es könnte auch als Briefmarke wahrgenommen werden. 
+    </p>
+    <p>Die Linien sind durch die Verwendung von GL_LINE_STRIP miteinander verbunden.</p>
+    <br> 
+
+    <script> //Hier wird die JavaScript-Datei in die HTML-Datei eingebunden
+        document.addEventListener("DOMContentLoaded", function() {
+            var Zeichenflaeche = document.getElementById("Vieleck"); //Hier wird das Canvas geladen und WebGL initialisiert
+            var gl = Zeichenflaeche.getContext("webgl");
+
+            if (!gl) {  // Hier wird eine Fehlermeldung eingebaut, wenn WebGL nicht initialisiert werden kann
+                console.error("Es ist leider nicht möglich WebGL zu initalisieren. Eventuell unterstützt der Browser dies nicht.");
+                return; 
+            }
+
+            var vertices = new Float32Array([ // Hier werden die Vertices für die 2D-Geometrie definiert innerhalb eines Arrays
+                -0.5, 0.5, //Das sind die entsprecheneden Koordinaten
+                -0.4, 0.6,
+                -0.3, 0.5,
+                -0.2, 0.6,
+                -0.1, 0.5,
+                0.0, 0.6,
+                0.1, 0.5,
+                0.2, 0.6,
+                0.3, 0.5,
+                0.4, 0.6,
+                0.5, 0.5,
+                0.5, 0.4,
+                0.4, 0.3,
+                0.5, 0.2,
+                0.4, 0.1,
+                0.5, 0.0,
+                0.4, -0.1,
+                0.5, -0.2,
+                0.4, -0.3,
+                0.5, -0.4,
+                0.5, -0.5,
+                0.4, -0.6,
+                0.3, -0.5,
+                0.2, -0.6,
+                0.1, -0.5,
+                0.0, -0.6,
+                -0.1, -0.5,
+                -0.2, -0.6,
+                -0.3, -0.5,
+                -0.4, -0.6,
+                -0.5, -0.5,
+                -0.5, -0.4,
+                -0.4, -0.3,
+                -0.5, -0.2,
+                -0.4, -0.1,
+                -0.5, 0.0,
+                -0.4, 0.1,
+                -0.5, 0.2,
+                -0.4, 0.3,
+                -0.5, 0.4,
+                -0.5, 0.5,
+            ]);
+
+            var vertexBuffer = gl.createBuffer(); // Hier wird der Vertex-Buffer erstellt und gebunden
+            gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+            gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+            gl.bindBuffer(gl.ARRAY_BUFFER, null);
+            
+           // Vertex-Shader-Code
+            var vertexShaderCode = `  
+                attribute vec2 coordinates;
+                void main(void) {
+                    gl_Position = vec4(coordinates, 0.0, 1.0);
+                }
+            `;
+            // Der Vertex-Shader wird erstellt und kompilliert
+            var vertexShader = gl.createShader(gl.VERTEX_SHADER);
+            gl.shaderSource(vertexShader, vertexShaderCode);
+            gl.compileShader(vertexShader);
+ 
+            // Fragment-Shader-Code
+            var fragmentShaderCode = `
+                void main(void) {
+                    gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
+                }
+            `;
+             // Der Fragment-Shader wird erstellt und kompilliert
+            var fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
+            gl.shaderSource(fragmentShader, fragmentShaderCode);
+            gl.compileShader(fragmentShader);
+
+            var shaderProgram = gl.createProgram(); //// Die Shaders werden zu einem Programm verlinkt
+            gl.attachShader(shaderProgram, vertexShader);
+            gl.attachShader(shaderProgram, fragmentShader);
+            gl.linkProgram(shaderProgram);
+            gl.useProgram(shaderProgram);
+
+            gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer); //// Der Buffer wird verbunden und die jeweilligen Attribute gesetzt
+            var coord = gl.getAttribLocation(shaderProgram, "coordinates");
+            gl.vertexAttribPointer(coord, 2, gl.FLOAT, false, 0, 0);
+            gl.enableVertexAttribArray(coord);
+
+            gl.clearColor(1.0, 1.0, 1.0, 1.0); // // Der Viewport wird gesetzt und der Inhalt des Canvas gelöscht
+            gl.clear(gl.COLOR_BUFFER_BIT);
+            gl.viewport(0,0,Zeichenflaeche.width,Zeichenflaeche.height);
+            gl.drawArrays(gl.LINE_STRIP, 0, vertices.length / 2); //Hier werden die Linien letztendlich gezeichnet
+        });
+    </script> <!--Hier ist das Skript zu Ende-->
+   
+   <footer><!--Im Footer befinden sich die Aufgabenstellung sowie Angaben zu den verwendeten Ressourcen-->
+        <h3>Aufgabenstellung:</h3>
+        <p>Erstellen Sie eine eigene 2D-Geometrie aus Linien (etwa 30 Vertices) und stellen Sie diese mittels WebGL dar. Dabei können Sie GL_LINES, GL_LINE_STRIP oder GL_LINE_LOOP verwenden.</p>
+        <p>Modul Graphical Visualisation Technologies</p>
+        <p>Verwendete Ressourcen: w3school, Bücherreihe "for dummies" für HTML/CSS & JavaScript</p>
+        <p>Erstellt am 23.10.2023</p>
+    </footer>
+    
+</body>
+</html><!--END-->
+
