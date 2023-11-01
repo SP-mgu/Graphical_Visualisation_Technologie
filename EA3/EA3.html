@@ -1,0 +1,193 @@
+
+<!DOCTYPE html><!--START-->
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"><!--Dies gestaltet die Webseite responsiv auf den Endgeräten-->
+    <title>Farbig gefüllte 2D Geometrie</title>
+    <style>
+        /* START - Allgemeines Styling */
+        body, html {
+        margin: 0;
+        padding: 0;
+        height: 100%; 
+        font-family: Arial, sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        }
+        /* Styling für Header, Main, Footer und Canvas */
+        header, main, footer, canvas {
+           padding: 20px;
+           text-align: center;
+        }
+        /* Styling für die Überschriften */
+        h1, h2 {
+             color: #e55b76; 
+        }
+        /* Hier wird der Text im Absatz zentriert */
+        p {
+            text-align: center;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        } 
+       
+        /* Footer Styling */
+        footer {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f5cccc;
+        } 
+       
+          /* Styling für Canvas */
+        canvas { 
+            width: 400px; height: 400px;  margin-top: 20px; 
+        }
+         /* END */ 
+    </style>
+</head>
+<body>
+    <header><!--Hier wird die Kopfzeile definiert mit dem Titel und meinem Namen-->
+        <h1>EA 3 - Farbig gefüllte 2D Geometrie</h1>
+        <p>Ein Projekt von Maxi Gutmann</p>
+    </header>
+    <canvas id="Diamant"></canvas>  <!-- Hier wird das Canvas zum Zeichnen der 2D-Geometrie initialisiert -->
+     <!-- Hier ist eine kurze Beschreibung des Inhaltes, welches auf der Webseite gesehen werden kann -->
+     <p>An dieser Stelle ist ein Diamant bestehend aus zwei Dreiecken zu sehen. Das obere Dreieck hat einen Farbverlauf aus den Farben: Lila, Magenta und Rot. </p>
+     <p> Das untere Dreieck besteht aus einem Farbverlauf aus den Farben: Orange, Gelb und Rot. </p>
+
+    <script> //Hier beginnt das Script
+        const canvas = document.getElementById('Diamant');//Hier wird das Canvas geladen und WebGL initialisiert
+        const gl = canvas.getContext('webgl');
+
+        if (!gl) {  // Hier wird eine Fehlermeldung eingebaut, wenn WebGL nicht initialisiert werden kann
+            alert('WebGL wird Es ist leider nicht möglich WebGL zu initalisieren. Eventuell unterstützt der Browser dies nicht. Ihrem Browser nicht unterstützt!');
+        } else {
+        
+        // Nun geht es weiter mit dem Setup und der Renderlogik
+
+        // Hier wird der Vertex Shader initislisiert
+        const vsSource = `
+            attribute vec4 aVertexPosition;
+            attribute vec3 aVertexColor;
+            varying lowp vec3 vColor;
+
+            void main() {
+                gl_Position = aVertexPosition;
+                vColor = aVertexColor;
+            }
+        `;
+
+        // Hier wird der Fragment Shader initialisiert
+        const fsSource = `
+            varying lowp vec3 vColor;
+
+            void main() {
+                gl_FragColor = vec4(vColor, 1.0);
+            }
+        `;
+
+        //Das Shader-Programm wird an dieser Stelle initialisiert
+        const shaderProgram = initShaderProgram(gl, vsSource, fsSource);
+
+        const programInfo = {   //Hier werden Informationen über das Shader-Programm gespeichert
+            program: shaderProgram,
+            attribLocations: {
+                vertexPosition: gl.getAttribLocation(shaderProgram, 'aVertexPosition'),
+                vertexColor: gl.getAttribLocation(shaderProgram, 'aVertexColor'),
+            },
+        };
+
+        // Hier werden die Diamantvertices und Farben definiert
+        const diamantVertices = [
+            // X, Y, R, G, B
+            -0.5, 0.0, 1.0, 0.0, 1.0,  // Magenta
+             0.5, 0.0, 0.5, 0.0, 1.0,  // Lila
+             0.0, 1.0, 1.0, 0.0, 0.0,  // Rot
+
+            -0.5, 0.0, 1.0, 1.0, 0.0,  // Gelb
+             0.0, -1.0, 1.0, 0.5, 0.0, // Orange
+             0.5, 0.0, 1.0, 0.0, 0.0   // Rot
+        ];
+
+        const diamantBuffer = gl.createBuffer(); // Hier wird der Buffer erstellt und gebunden
+        gl.bindBuffer(gl.ARRAY_BUFFER, diamantBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(diamantVertices), gl.STATIC_DRAW);
+
+        render();
+
+        function render() { //Der Diamant wird an dieser Stelle gerendert
+            gl.clearColor(1, 1, 1, 0);
+            gl.clear(gl.COLOR_BUFFER_BIT);
+
+            gl.bindBuffer(gl.ARRAY_BUFFER, diamantBuffer);
+
+            // Position
+            gl.vertexAttribPointer(
+                programInfo.attribLocations.vertexPosition,
+                2,
+                gl.FLOAT,
+                false,
+                20,
+                0
+            );
+            gl.enableVertexAttribArray(programInfo.attribLocations.vertexPosition);
+
+            // Farbe
+            gl.vertexAttribPointer(
+                programInfo.attribLocations.vertexColor,
+                3,
+                gl.FLOAT,
+                false,
+                20,
+                8
+            );
+            gl.enableVertexAttribArray(programInfo.attribLocations.vertexColor);
+
+            gl.useProgram(programInfo.program);
+            gl.drawArrays(gl.TRIANGLES, 0, 6);
+        }
+        //Hier wird das Shader-Programm initialisiert
+        function initShaderProgram(gl, vsSource, fsSource) {
+            const vertexShader = loadShader(gl, gl.VERTEX_SHADER, vsSource);
+            const fragmentShader = loadShader(gl, gl.FRAGMENT_SHADER, fsSource);
+
+            const shaderProgram = gl.createProgram();
+            gl.attachShader(shaderProgram, vertexShader);
+            gl.attachShader(shaderProgram, fragmentShader);
+            gl.linkProgram(shaderProgram);
+
+            if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
+                alert('Fehler beim Initialisieren des Shader-Programms: ' + gl.getProgramInfoLog(shaderProgram));
+                return null;
+            }
+
+            return shaderProgram;
+        }
+        //Diese Funktion lädt und kompilliert den Shader
+        function loadShader(gl, type, source) {
+            const shader = gl.createShader(type);
+            gl.shaderSource(shader, source);
+            gl.compileShader(shader);
+
+            if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+                alert('Fehler beim Kompilieren des Shaders: ' + gl.getShaderInfoLog(shader));
+                gl.deleteShader(shader);
+                return null;
+            }
+
+            return shader;
+        }
+    }
+    </script> <!--Hier ist das JavaScript zu Ende-->
+    <footer><!--Im Footer befinden sich die Aufgabenstellung sowie Angaben zu den verwendeten Ressourcen-->
+        <h3>Aufgabenstellung:</h3>
+        <p>Kolorieren Sie eine eigene 2D-Geometrie, indem Sie nun Dreiecke (keine Linien) erzeugen (Sie können auf der Lösung der vorherigen Aufgabe aufbauen). 
+            Sie können dabei einfarbige Flächen oder auch Farbverläufe einsetzen. </p>
+        <p>Modul Graphical Visualisation Technologies</p>
+        <p>Verwendete Ressourcen: w3school, Bücherreihe "for dummies" für HTML/CSS & JavaScript</p>
+        <p>Erstellt am 27.10.2023</p>
+    </footer>
+</body>
+</html><!--END-->
