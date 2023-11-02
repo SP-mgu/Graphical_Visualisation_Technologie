@@ -1,0 +1,265 @@
+<!DOCTYPE html><!--START-->
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"><!--Dies gestaltet die Webseite responsiv auf den Endgeräten-->
+    <title>Farbig gefüllte 2D Geometrie</title>
+    <style>
+        /* START - Allgemeines Styling */
+        body, html {
+        margin: 0;
+        padding: 0;
+        height: 100%; 
+        font-family: Arial, sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        }
+        /* Styling für Header, Main, Footer und Canvas */
+        header, main, footer, canvas {
+           padding: 20px;
+           text-align: center;
+        }
+        /* Styling für die Überschriften */
+        h1, h2 {
+             color: #e55b76; 
+        }
+        /* Hier wird der Text im Absatz zentriert */
+        p {
+            text-align: center;
+        } 
+       
+        /* Footer Styling */
+        footer {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f5cccc;
+        } 
+        .container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-right: 20px; /* Abstand zwischen den Elementen */
+        }
+        .item-text {
+            margin-top: 8px; /* Abstand zwischen Element und Text */
+        }
+
+        img {
+            margin-left: 20px; /* Abstand zwischen Canvas und Bild */
+            width: 400px; height: 400px;
+        }
+          /* Styling für Canvas */
+        canvas { 
+            width: 400px; height: 400px;  margin-top: 20px;
+        }
+         /* END */ 
+    </style>
+</head>
+<body>
+    <header><!--Hier wird die Kopfzeile definiert mit dem Titel und meinem Namen-->
+        <h1>EA 3 - Farbig gefüllte 2D Geometrie</h1>
+        <h3>Ein Projekt von Maxi Gutmann</h3>
+    </header>
+     <!-- Kurze Beschreibung der Grafik -->
+    <p>An dieser Stelle wird eine farbige Blume mit acht Blütenblättern gezeigt.  </p>
+    <p>Die vier Hauptblätter bestehen dabei aus zwei Dreiecken, die weiteren vier Außenblätter bestehen jeweils nur aus einem Dreieck.
+        Leider musste ich feststellen, dass die Blume nicht in allen Browsern sichtbar ist. Daher habe ich ein Bild der Blume eingefügt, um zu zeigen wie es aussehen sollte. Unter Chrome auf MacOs hat es jedoch funktioniert.
+    </p>
+    <br>
+    
+    <div class="container">
+        <div class="item">
+            <canvas id="blumeCanvas"></canvas> <!-- Hier wird das Canvas zum Zeichnen der 2D-Geometrie initialisiert -->
+            <p class="item-text">Blume erstellt mittels WebGL</p>
+        </div>
+        <div class="item">
+            <img src="Blume.jpg" alt="Hier sollte die Blume als Bild zu sehen sein wie sie eigentlich aussehen sollte." />
+            <p class="item-text">Bild von der Blume, wie es aussehen sollte</p>
+        </div>
+    </div>
+        
+    <script>//Hier beginnt das Script
+        const canvas = document.getElementById('blumeCanvas');
+        const gl = canvas.getContext('webgl');
+
+        if (!gl) {  // Hier wird eine Fehlermeldung eingebaut, wenn WebGL nicht initialisiert werden kann
+            alert('WebGL wird Es ist leider nicht möglich WebGL zu initalisieren. Eventuell unterstützt der Browser dies nicht. Ihrem Browser nicht unterstützt!');
+        } else {
+             // Hier wird der Vertex Shader initislisiert
+            const vsSource = `  
+                attribute vec4 aVertexPosition;
+                attribute vec3 aVertexColor;
+                varying lowp vec3 vColor;
+
+                void main() {
+                    gl_Position = aVertexPosition;
+                    vColor = aVertexColor;
+                }
+            `;
+           //  Fragment-Shader-Quellcode
+            const fsSource = `
+                varying lowp vec3 vColor;
+
+                void main() {
+                    gl_FragColor = vec4(vColor, 1.0);
+                }
+            `;
+            // Initialisierung des Shader-Programms 
+            const shaderProgram = initShaderProgram(gl, vsSource, fsSource);
+
+            const programInfo = {
+                program: shaderProgram,
+                attribLocations: {
+                    vertexPosition: gl.getAttribLocation(shaderProgram, 'aVertexPosition'),
+                    vertexColor: gl.getAttribLocation(shaderProgram, 'aVertexColor'),
+                },
+            };
+
+            const blumeVertices = [
+                // Hier werden die Blütenblätter definiert: 
+                // X, Y, R, G, B
+                //Erstes Blütenblatt 
+                0.0, 0.0, 1.0, 1.0, 0.0, // Mitte der Blume (gelb)
+                0.1, 0.5, 1.0, 0.0, 1.0, // Ecke links (magenta)
+                -0.1, 0.5, 0.5, 0.0, 1.0, // Ecke rechts  (lila)
+
+                0.0, 1.0, 0.68, 0.85, 0.90, // Mitte der Blume (hellblau)
+                0.1, 0.5, 1.0, 0.0, 1.0, //Ecke links (magenta)
+                -0.1, 0.5, 0.5, 0.0, 1.0, // Ecke rechts  (lila)
+                
+                //zweites Blütenblatt
+                0.0, 0.0, 1.0, 1.0, 0.0, // Mitte der Blume (gelb)
+                0.5, 0.1, 1.0, 0.0, 1.0, // Ecke links (magenta)
+                0.5, -0.1, 0.5, 0.0, 1.0, // Ecke rechts  (lila)
+
+                1.0, 0.0, 0.68, 0.85, 0.90, // Mitte der Blume (hellblau)
+                0.5, 0.1, 1.0, 0.0, 1.0, // Ecke links (magenta)
+                0.5, -0.1, 0.5, 0.0, 1.0, // Ecke rechts  (lila)
+
+                //Drittes Blütenblatt
+                0.0, -1.0, 0.68, 0.85, 0.90, // Mitte der Blume (hellblau)
+                0.1, -0.5, 1.0, 0.0, 1.0, // Ecke links (magenta)
+                -0.1, -0.5, 0.5, 0.0, 1.0, // Ecke rechts  (lila)
+
+                0.0, 0.0, 1.0, 1.0, 0.0, // Mitte der Blume (gelb)
+                0.1, -0.5, 1.0, 0.0, 1.0, // Ecke links (magenta)
+                -0.1, -0.5, 0.5, 0.0, 1.0, // Ecke rechts  (lila)
+
+                //Viertes Blütenblatt
+                0.0, 0.0, 1.0, 1.0, 0.0, // Mitte der Blume (gelb)
+                -0.5, 0.1,1.0, 0.0, 1.0, // Ecke links (magenta)
+                -0.5, -0.1, 0.5, 0.0, 1.0, // Ecke rechts  (lila)
+                
+                -1.0, 0.0, 0.68, 0.85, 0.90, // Mitte der Blume (hellblau)
+                -0.5, 0.1,1.0, 0.0, 1.0, // Ecke links (magenta)
+                -0.5, -0.1, 0.5, 0.0, 1.0, // Ecke rechts  (lila) 
+
+                // Fünftes Blütenblatt (oben rechts)
+                0.0, 0.0, 1.0, 1.0, 0.0, // Mitte der Blume (gelb)
+                0.5, 0.3, 1.0, 0.0, 1.0, // Ecke links (magenta)
+                0.3, 0.5, 0.5, 0.0, 1.0, // Ecke rechts  (lila)
+                
+                
+                // Sechstes Blütenblatt (oben links)
+                0.0, 0.0, 1.0, 1.0, 0.0, // Mitte der Blume (gelb)
+                -0.5, 0.3, 1.0, 0.0, 1.0, // Ecke links (magenta)
+                -0.3, 0.5, 0.5, 0.0, 1.0, // Ecke rechts  (lila)
+
+                // Siebentes Blütenblatt (unten links)
+                0.0, 0.0, 1.0, 1.0, 0.0, // Mitte der Blume (gelb)
+                -0.5, -0.3, 1.0, 0.0, 1.0, // Ecke links (magenta)
+                -0.3, -0.5, 0.5, 0.0, 1.0, // Ecke rechts  (lila)
+                
+                // Achtes Blütenblatt (unten rechts)
+                0.0, 0.0, 1.0, 1.0, 0.0, // Mitte der Blume (gelb)
+                0.5, -0.3, 1.0, 0.0, 1.0, // Ecke links (magenta)
+                0.3, -0.5, 0.5, 0.0, 1.0, // Ecke rechts  (lila)
+                
+            ];
+    
+            const blumeBuffer = gl.createBuffer(); //Initialisierung des Buffer-SetUps
+            gl.bindBuffer(gl.ARRAY_BUFFER, blumeBuffer);
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(blumeVertices), gl.STATIC_DRAW);
+
+            function render() {  // Hier wird die Rendering-Funktion für die Grafik aufgestellt
+                gl.clearColor(1, 1, 1, 1);
+                gl.clear(gl.COLOR_BUFFER_BIT);
+
+                gl.bindBuffer(gl.ARRAY_BUFFER, blumeBuffer);
+
+                gl.vertexAttribPointer(
+                    programInfo.attribLocations.vertexPosition,
+                    2,
+                    gl.FLOAT,
+                    false,
+                    20,
+                    0
+                );
+                gl.enableVertexAttribArray(programInfo.attribLocations.vertexPosition);
+
+                gl.vertexAttribPointer(
+                    programInfo.attribLocations.vertexColor,
+                    3,
+                    gl.FLOAT,
+                    false,
+                    20,
+                    8
+                );
+                gl.enableVertexAttribArray(programInfo.attribLocations.vertexColor);
+
+                gl.useProgram(programInfo.program);
+                gl.drawArrays(gl.TRIANGLES, 0, 36); // Anzahl der Dreiecke hier anpassen
+            }
+
+            function initShaderProgram(gl, vsSource, fsSource) { // Hier wird die Funktion zum Initialisieren des Shader-Programms augestellt
+                const vertexShader = loadShader(gl, gl.VERTEX_SHADER, vsSource);
+                const fragmentShader = loadShader(gl, gl.FRAGMENT_SHADER, fsSource);
+
+                const shaderProgram = gl.createProgram();
+                gl.attachShader(shaderProgram, vertexShader);
+                gl.attachShader(shaderProgram, fragmentShader);
+                gl.linkProgram(shaderProgram);
+
+                if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
+                    alert('Fehler beim Initialisieren des Shader-Programms: ' + gl.getProgramInfoLog(shaderProgram));
+                    return null;
+                }
+
+                return shaderProgram;
+            }
+
+            function loadShader(gl, type, source) { // Diese Funktion dient zum Laden und Kompilieren von Shadern
+                const shader = gl.createShader(type);
+                gl.shaderSource(shader, source);
+                gl.compileShader(shader);
+
+                if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+                    alert('Fehler beim Kompilieren des Shaders: ' + gl.getShaderInfoLog(shader));
+                    gl.deleteShader(shader);
+                    return null;
+                }
+
+                return shader;
+            }
+
+            render();// Hier wird die Render-Funktion aufgerufen, um die Grafik zu zeichnen
+        }
+    </script>
+<footer><!--Im Footer befinden sich die Aufgabenstellung sowie Angaben zu den verwendeten Ressourcen-->
+    <h3>Aufgabenstellung:</h3>
+    <p>Kolorieren Sie eine eigene 2D-Geometrie, indem Sie nun Dreiecke (keine Linien) erzeugen (Sie können auf der Lösung der vorherigen Aufgabe aufbauen). 
+        Sie können dabei einfarbige Flächen oder auch Farbverläufe einsetzen. </p>
+    <p>Modul Graphical Visualisation Technologies</p>
+    <p>Verwendete Ressourcen: w3school, Bücherreihe "for dummies" für HTML/CSS & JavaScript</p>
+    <p>Erstellt am 01.11.2023</p>
+</footer>
+</body>
+</html><!--END-->
