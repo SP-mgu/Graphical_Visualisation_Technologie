@@ -1,0 +1,52 @@
+<!DOCTYPE html> <!--START-->
+<html lang="de"> <!--EA4 - Parametrisierte Flächen-->
+<head> 
+    <meta charset="UTF-8"> <!--Hier wird der Zeichensatz für das Dokument festgelegt-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"><!--Dies gestaltet die Webseite responsiv auf den Endgeräten-->
+    <title>Parametrisierte Flächen von Maxi Gutmann</title><!--Das ist der Titel des Dokumentes-->
+    <link rel="stylesheet" href="style.css"><!--An dieser Stelle wird die CSS-Datei in die HTML-Datei eingebunden-->
+</head>
+<body>
+    <header><!--Hier wird die Kopfzeile definiert mit dem Titel und meinem Namen-->
+        <h1>EA 4 - Parametrisierte Flächen</h1>
+        <h4>Ein Projekt von Maxi Gutmann</h4>
+    </header>
+   
+    <main>
+        <!--Hier sind ersteinmal ein paar allgemeine Hinweise für den Nutzer der Webseite-->
+        <p>Hier wurde versucht 3 parametrisierte Flächen zu erzeugen.</p>
+        <p>Bei der ersten Fläche kann mittels der Button zwischen dem Farbverlauf und den Linien hin und her geschaltet werden</p>
+        <!--AN dieser Stelle werden die Canvas für die Flächen definiert-->
+        
+            <h3>Torus / rosaner Donut</h2>
+            <canvas id="canvas" width="500" height="500"></canvas>
+           
+            <div class="button-container"> <!--Hier wird der Button-Container definiert-->
+                <button id="lines">Drahtnetz</button>
+                <button id="filled">Füllung</button>
+            </div>
+       
+            <h3>Hyperbolic Helicoid / zwei Muscheln</h2>
+            <canvas id="canvas2" width="500" height="500"></canvas>
+     
+    
+            <h3>Eigene parametrisierte Fläche/ Sanduhr</h2>
+            <canvas id="canvas3" width="500" height="500"></canvas>
+       
+            <p>Diese Fläche entstand aus der ursprünglichen Formel des Torus, indem zwei cos-Funktionen durch sin-Funktionen ausgetauscht wurden.</p>
+
+    </main>
+    <footer><!--Im Footer befinden sich die Aufgabenstellung sowie Angaben zu den verwendeten Ressourcen-->
+        <h3>Aufgabenstellung:</h3>
+        <p>1. Erzeugen Sie zwei neue parametrisierte Flächen zunächst mit Linien, siehe Material.</p>
+        <p>2. Füllen Sie dann die Flächen und kolorieren Sie sie passend zur jeweiligen Flächenform, z. B. mit Farbverläufen. Die Linien sollen noch sichtbar sein, oder es besteht die Möglichkeit, zwischen Linien und Füllung umzuschalten.</p>
+        <p>3. Kreieren Sie auch eine eigene Parametrisierung für eine Fläche und kolorieren Sie diese. Dazu sollen Sie sich eine neue Formel ausdenken, diese können Sie natürlich auf der Basis der vorhandenen Formeln aufbauen. Versuchen Sie Terme zu mischen und schauen Sie, ob das passiert, was Sie erwarten. Alternativ suchen Sie sich eine Form und versuchen Sie diese zu erzeugen, vielleicht „eine Qualle“ oder Ihre Lampe.</p>
+        <p>Modul Graphical Visualisation Technologies</p>
+        <p>Verwendete Ressourcen: Bereitgestelltes Material, w3school, Bücherreihe "for dummies" für HTML/CSS & JavaScript</p>
+        <p>Erstellt am 09.11.2023</p>
+    </footer>
+    <script src="Tropfen.js"></script> <!--Hier werden die JS-Skripte in das Dokument eingebunden-->
+    <script src="form.js"></script>
+    <script src="torus.js"></script>
+    </body>
+</html><!--END-->
