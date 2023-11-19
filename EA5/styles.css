@@ -1,0 +1,64 @@
+/* START - Allgemeines Styling */
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+header, main, footer, p{
+    text-align: center;
+}
+
+h1, h2, h3{
+    color: #e55b76; 
+    margin-top: 20px;
+    text-align: center;
+}
+
+#degree-display {
+    font-size: 24px;
+    text-align: center;
+    margin-top: 10px;
+    }
+
+/* Styling für Buttons */
+button {
+    padding: 10px 20px;
+    margin: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #f5cccc;
+    border: #dd335a;
+}
+
+button:hover {
+    background-color: #e55b76;
+}
+
+.button-container {
+    display: flex;
+    justify-content: center; 
+    margin-top: 20px; 
+    margin-bottom: 20px;
+}
+/*Styling für Canvas*/
+.canvas-container {
+    display: flex;
+    justify-content: center; 
+    margin-top: 20px; 
+    margin-bottom: 20px;
+    
+}
+canvas {
+    margin: 10px;
+    border: 1px solid #e55b76;
+    background-color: #f5cccc;
+}
+
+/* Footer Styling */
+footer {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #f5cccc;
+} 
+/* END */

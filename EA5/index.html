@@ -1,0 +1,75 @@
+<!DOCTYPE html> <!--START-->
+<html lang="de"> <!--EA5 - Kamerabewegung-->
+<head> 
+    <meta charset="UTF-8"> <!--Hier wird der Zeichensatz für das Dokument festgelegt-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"><!--Dies gestaltet die Webseite responsiv auf den Endgeräten-->
+    <title>Kamerabewegung von Maxi Gutmann</title><!--Das ist der Titel des Dokumentes-->
+    <link rel="stylesheet" href="styles.css"><!--An dieser Stelle wird die CSS-Datei in die HTML-Datei eingebunden-->
+		<script src="gl-matrix.js"></script> <!--Hier werden die Skripte in das Dokument eingebunden-->
+		<script src="kegel.js"></script>
+		<script src="plane.js"></script>
+		<script src="script.js"></script>
+		<script src="Flaeche.js"></script>
+		<!--Hier wir der Vertex Shader definiert-->
+		<script type="x-shader/x-vertex" id="vertexshader">
+			attribute vec3 aPosition;
+			attribute vec3 aNormal;
+
+			uniform mat4 uPMatrix;
+			uniform mat4 uMVMatrix;
+
+			varying vec4 vColor;
+
+			void main(){
+				gl_Position = uPMatrix * uMVMatrix * vec4(aPosition, 1.0);
+	
+				vColor = vec4(aNormal.x, aNormal.y, aNormal.z, 1.0);
+				vColor = (vColor + 1.0) / 2.0;
+			}
+		</script> 
+		<!--Hier wir der Fragment Shader definiert-->
+		<script type="x-shader/x-fragment" id="fragmentshader">
+			precision mediump float;
+			varying vec4 vColor;
+
+			void main() {
+				gl_FragColor = vColor;
+			}
+		</script>
+		
+	</head>
+
+	<body onload="app.start()">
+		<header><!--Hier wird die Kopfzeile definiert mit dem Titel und meinem Namen-->
+			<h1>EA 5 - Kamerabewegung</h1>
+			<p><b>Ein Projekt von Maxi Gutmann</b></p>
+			<br>
+		</header>
+		 <!--Hier sind ersteinmal ein paar allgemeine Hinweise für den Nutzer der Webseite-->
+		 <p>Hier wurde der erste Teil der Aufgabe gelöst. Leider habe ich es nicht geschafft das Kugelmodell mit in die Szene zu integrieren.</p>
+		<p>Daher kann man über den Button zum zweiten Teil der Aufgabe gelangen.</p>
+		 <div class="button-container">
+			<button id="Unterseite">Zum zweiten Teil der Aufgabe</button> <!--Mittels des Buttons gelangt man zum zweiten Teil der Aufgabe, welcher in einer extra HTML-Datei angefertigt wurde-->
+		</div>
+		<br>
+		<br>
+		<h3>1.Teil der Aufgabe</h3>
+		<p>Mit den beiden Pfeiltasten kann sich um die Modelle gedreht bzw. mit den Tasten [N] & [Shift-N] gezoomt werden.</p>
+			 <!--AN dieser Stelle wird der Container für das Canvas  definiert-->
+		<div class="canvas-container">
+		 <canvas id="canvas" width="1500" height="1000"></canvas>
+		 </div>
+		<footer><!--Im Footer befinden sich die Aufgabenstellung sowie Angaben zu den verwendeten Ressourcen-->
+			<h3>Aufgabenstellung:</h3>
+			<p>Erstellen Sie eine Szene aus mindestens zwei Grundkörpern oder parametrisierten Flächen. Sie soll interaktiv von allen Seiten einsehbar sein, siehe Interaktion. </p>
+			<p>Modul Graphical Visualisation Technologies</p>
+			<p>Verwendete Ressourcen: w3school, Bücherreihe "for dummies" für HTML/CSS & JavaScript, Das Skript</p>
+			<p>Erstellt am 16.11.2023</p>
+		</footer>
+		<script> 
+			document.getElementById('Unterseite').addEventListener('click', function() {
+				window.location.href = 'Unterseite.html'; //Hier wird der Pfad zur zweiten HTML-Datei festgelegt
+			});
+		</script>
+	</body>
+</html>
