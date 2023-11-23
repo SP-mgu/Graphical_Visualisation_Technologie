@@ -1,0 +1,80 @@
+<!DOCTYPE html> <!--START-->
+<html lang="de"> <!--EA6 - Objekte bewegen-->
+<head> 
+    <meta charset="UTF-8"> <!--Hier wird der Zeichensatz für das Dokument festgelegt-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"><!--Dies gestaltet die Webseite responsiv auf den Endgeräten-->
+    <title>Kamerabewegung von Maxi Gutmann</title><!--Das ist der Titel des Dokumentes-->
+    <link rel="stylesheet" href="styles.css"><!--An dieser Stelle wird die CSS-Datei in die HTML-Datei eingebunden-->
+		<script src="ext/gl-matrix.js"></script>
+		<script src="Kugeln2.js"></script>
+		<script src="Torus2.js"></script>
+		<script src="plan2.js"></script>
+		<script src="script2.js"></script>
+		<!--Initialisierung des Vertex Shaders-->
+		<script type="x-shader/x-vertex" id="vertexshader">
+			attribute vec3 aPosition;
+			attribute vec3 aNormal;
+
+			uniform mat4 uPMatrix;
+			uniform mat4 uMVMatrix;
+			uniform vec4 uColor;
+			uniform mat3 uNMatrix;
+
+			varying vec4 vColor;
+
+			void main(){
+			gl_Position = uPMatrix * uMVMatrix * vec4(aPosition, 1.0);
+			vec3 tNormal = uNMatrix * aNormal;
+
+			vColor = vec4(tNormal.z, tNormal.z, tNormal.z, 1.0);
+			vColor = uColor * (vColor + 1.0) / 2.0;
+			
+			}
+		</script>
+		<!--Initialisierung des Fragment Shaders-->
+		<script type="x-shader/x-fragment" id="fragmentshader">
+			precision mediump float;
+			varying vec4 vColor;
+
+			void main() {
+			gl_FragColor = vColor;
+			}
+		</script>
+	</head>
+	<body onload="app.start()">
+		<header><!--Hier wird die Kopfzeile definiert mit dem Titel und meinem Namen-->
+			<h1>EA 6 - Objekte bewegen - fliegende Kugeln</h1>
+			<p><b>Ein Projekt von Maxi Gutmann</b></p>
+			<br>
+		</header>
+		<div class="button-container">
+			<button id="Home">Zurück zur Startseite</button> <!--Mittels des Buttons gelangt man zurück zur Startseite-->
+		</div>
+		<h3>Erweiterung</h3>
+		<p>Hier fliegen die Kugeln nun auf einer Kreisbahn durch den Torus, während dieser sich um seine X-Achse rotiert.</p>
+		<p>Hier wurde versucht, dass die Animation der Kugeln der Positionsveränderung des Torus folgt. Die Funktion der Tasten bleibt auch hier bestehen.</p>
+		<p>Weiterhin ist eine Drehung um die Z-Achse mit der Taste [Z], sowie um die Y-Achse mit der Taste [Y] möglich. Jedoch läuft die Rotation um die X-Ache weiter, sodass die Kugeln nur der Animation auf der X-Ache folgen. </p>
+		<!--AN dieser Stelle wird der Container für das Canvas  definiert-->
+		<div class="canvas-container">
+		<canvas id="canvas2" width="1200" height="1200"></canvas>
+		</div>
+		<p>Folgende Tasten lassen sich betätigen:</p>
+		<p>[Pfeiltasten] - Drehung der Kamera um die Modelle; [K] - Beim gedrückt halten Animation der Kugeln + Rotation des Torus um die X-Achse, erneutes Drücken beendet die Animation</p>
+		<p>[N] - heran-/heraus-zoomen   [M] - starker Zoom der Kamera  [B] - Höhe der Kamera verändern</p>
+		<p>[X] - Torus rotiert um X-Achse  [Y] - Torus rotiert um Y-Achse  [Z] - Torus rotiert um Z-Achse</p>
+		<p>[S] - Torus scalieren</p>
+		<p>Hinweis: Beendet man die Animation der Kugeln nicht, bleibt die Animation während jeder Bewegung der Kamera/ Veränderung des Torus bestehen und wird ohne Drücken der Taste K ausgeführt.</p>
+		<footer><!--Im Footer befinden sich die Aufgabenstellung sowie Angaben zu den verwendeten Ressourcen-->
+			<h3>Aufgabenstellung:</h3>
+			<p> Lassen Sie die vier Kugeln aus dem Beispielprogramm aus der Lerneinheit TFM interaktiv durch den Torus fliegen. Dabei bewegen sich die Kugeln kontinuierlich auf Kreisbahnen so, dass sie sich nie berühren. </p>
+			<p>Modul Graphical Visualisation Technologies</p>
+			<p>Verwendete Ressourcen: w3school, Bücherreihe "for dummies" für HTML/CSS & JavaScript, Das Skript</p>
+			<p>Erstellt am 23.11.2023</p>
+		</footer>
+	</body>
+	<script >
+		document.getElementById('Home').addEventListener('click', function() {
+					window.location.href = 'index.html'; //Hier wird der Pfad zur zweiten HTML-Datei festgelegt
+				});
+	</script>
+</html><!--END-->

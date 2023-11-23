@@ -1,0 +1,82 @@
+<!DOCTYPE html> <!--START-->
+<html lang="de"> <!--EA6 - Objekte bewegen-->
+<head> 
+    <meta charset="UTF-8"> <!--Hier wird der Zeichensatz für das Dokument festgelegt-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"><!--Dies gestaltet die Webseite responsiv auf den Endgeräten-->
+    <title>Objekte bewegen - fliegende Kugeln von Maxi Gutmann</title><!--Das ist der Titel des Dokumentes-->
+    <link rel="stylesheet" href="styles.css"><!--An dieser Stelle wird die CSS-Datei in die HTML-Datei eingebunden-->
+		<script src="ext/gl-matrix.js"></script> <!--Einbinden der Skripte in die HTML Datei-->
+		<script src="kugeln.js"></script>
+		<script src="torus.js"></script>
+		<script src="plane.js"></script>
+		<script src="script.js"></script>
+		<!--Initialisierung des Vertex Shaders-->
+		<script type="x-shader/x-vertex" id="vertexshader">
+			attribute vec3 aPosition;
+			attribute vec3 aNormal;
+
+			uniform mat4 uPMatrix;
+			uniform mat4 uMVMatrix;
+			uniform vec4 uColor;
+			uniform mat3 uNMatrix;
+
+			varying vec4 vColor;
+
+			void main(){
+			gl_Position = uPMatrix * uMVMatrix * vec4(aPosition, 1.0);
+			vec3 tNormal = uNMatrix * aNormal;
+
+			vColor = vec4(tNormal.z, tNormal.z, tNormal.z, 1.0);
+			vColor = uColor * (vColor + 1.0) / 2.0;
+			
+			}
+		</script>
+		<!--Initialisierung des Fragment Shaders-->
+		<script type="x-shader/x-fragment" id="fragmentshader">
+			precision mediump float;
+			varying vec4 vColor;
+
+			void main() {
+			gl_FragColor = vColor;
+			}
+		</script>
+	</head>
+
+	<body onload="app.start()">
+		<header><!--Hier wird die Kopfzeile definiert mit dem Titel und meinem Namen-->
+			<h1>EA 6 - Objekte bewegen - fliegende Kugeln</h1>
+			<p><b>Ein Projekt von Maxi Gutmann</b></p>
+			<br>
+		</header>
+		 <!--Hier sind ersteinmal ein paar allgemeine Hinweise für den Nutzer der Webseite-->
+		 <p>Bei der Aufgabenstellung war ich mir nicht sicher, ob wie für jede Kugel eine Kreisbahn erstellen sollen oder eine Kreisbahn auf der alle Kugeln laufen. Daher habe ich beides gemacht.</p>
+		 <p> Hier kann die erste Version gesehen werden, in der jede Kugel auf ihrer eigenen Kreisbahn läuft und sich die Kugeln an sich nicht berühren sollten.Die Kugeln können mittels Betätigung der Taste [K] animiert werden.</p>
+		<p>Zudem wurden zusätzliche Funktionen implementiert. Die jeweilligen Tasten sind unter dem Canvas aufgezählt.</p>
+		<p>Für die Erweiterung der Aufgabe hat es bei dieser Animation leider nicht geklappt die Animation der Kugeln mit samt der Veränderung des Torus zu folgen. Dies wurde bei einer vereinfachten Version bei der Unterseite versucht:</p>
+		<div class="button-container">
+			<button id="Unterseite">Zur Erweiterung</button> <!--Mittels des Buttons gelangt man zur Erweiterung der Aufgabe, welche in einer extra HTML-Datei angefertigt wurde-->
+		</div>
+		<div class="canvas-container"> <!--Hier ist das Canvas definiert-->
+		 <canvas id="canvas" width="1200" height="800"></canvas>
+		</div>
+		<p>Folgende Tasten lassen sich betätigen:</p> <!--Hier sind weitere Hinweise für die Benutzung-->
+		<p>[Pfeiltasten] - Drehung der Kamera um die Modelle; [K] - Beim gedrückt halten Animation der Kugeln, erneutes Drücken beendet Animation</p>
+		<p>[N] - heran-/heraus-zoomen   [M] - starker Zoom der Kamera  [B] - Höhe der Kamera verändern</p>
+		<p>[X] - Torus rotiert um X-Achse  [Y] - Torus rotiert um Y-Achse  [Z] - Torus rotiert um Z-Achse</p>
+		<p>[S] - Torus scalieren</p>
+		<p>Hinweis: Beendet man die Animation der Kugeln nicht, bleibt die Animation während jeder Bewegung der Kamera/ Veränderung des Torus bestehen, nur leider folgt die Animation nicht der Position des Torus.</p>
+		<p>Daher bewegen sich die Kugeln nur durch die Mitte des Torus hindurch, wenn sich der Torus in der Startposition verhält.</p>
+		<footer><!--Im Footer befinden sich die Aufgabenstellung sowie Angaben zu den verwendeten Ressourcen-->
+			<h3>Aufgabenstellung:</h3>
+			<p> Lassen Sie die vier Kugeln aus dem Beispielprogramm aus der Lerneinheit TFM interaktiv durch den Torus fliegen. Dabei bewegen sich die Kugeln kontinuierlich auf Kreisbahnen so, dass sie sich nie berühren. </p>
+			<p>Modul Graphical Visualisation Technologies</p>
+			<p>Verwendete Ressourcen: w3school, Bücherreihe "for dummies" für HTML/CSS & JavaScript, Das Skript</p>
+			<p>Erstellt am 23.11.2023</p>
+		</footer>
+	</body>
+	<script> //Hier wird dem Button eine Funktion zugewiesen
+		document.getElementById('Unterseite').addEventListener('click', function() {
+			window.location.href = 'Unterseite.html'; //Hier wird der Pfad zur zweiten HTML-Datei festgelegt
+		});
+	</script>
+</html> <!--END-->
