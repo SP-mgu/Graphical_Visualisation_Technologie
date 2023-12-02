@@ -1,0 +1,86 @@
+<!DOCTYPE html> <!--START-->
+<html lang="de"> <!--EA7 - Z-Buffer Visualisierung-->
+<head> 
+    <meta charset="UTF-8"> <!--Hier wird der Zeichensatz für das Dokument festgelegt-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"><!--Dies gestaltet die Webseite responsiv auf den Endgeräten-->
+    <title>Z-Buffer Visualisierung von Maxi Gutmann</title><!--Das ist der Titel des Dokumentes-->
+    <link rel="stylesheet" href="styles.css"><!--An dieser Stelle wird die CSS-Datei in die HTML-Datei eingebunden-->
+		<script src="ext/gl-matrix.js"></script>
+		<script src="plane.js"></script>
+		<script src="script.js"></script>
+		<script src="kegel.js"></script>
+		<script src="kugeln.js"></script>
+		<script src="torus.js"></script>
+		<!--Hier wird der Vertex-Shader initialsiert-->
+		<script type="x-shader/x-vertex" id="vertexshader"> 
+			precision mediump float;
+			
+			attribute vec3 aPosition;
+			attribute vec3 aNormal;
+			
+			uniform mat4 uPMatrix;
+			uniform mat4 uMVMatrix;
+			uniform mat3 uNMatrix;
+			uniform vec4 uColor;
+			
+			
+			varying vec4 vColor;
+			
+			void main(){
+				gl_Position = uPMatrix * uMVMatrix * vec4(aPosition, 1.0);
+				
+				vec3 tNormal = uNMatrix * aNormal;
+			
+				vColor = uColor;
+			}
+		</script>
+		<!--Hier wird der Fragment-Shader initialisiert-->
+		<!--Verwenden von gl_FragCoord.z für die Z-Tiefe und Umwandlung in Graustufens-->
+		<script type="x-shader/x-fragment" id="fragmentshader">
+			precision mediump float;
+			varying vec4 vColor;
+
+			void main() {
+
+			float depth = gl_FragCoord.z;
+			gl_FragColor = vec4(vec3(depth), 1.0);
+			
+		}
+		</script>
+	</head>
+	<body onload="app.start()"> <!--Funktion Start wird aufegrufen aus dem app-Skript-->
+		<header><!--Hier wird die Kopfzeile definiert mit dem Titel und meinem Namen-->
+			<h1>EA 7 - Z-Buffer Visualisierung</h1>
+			<p><b>Ein Projekt von Maxi Gutmann</b></p>
+			<br>
+		</header>
+		 <!--Hier sind ersteinmal ein paar allgemeine Hinweise für den Nutzer der Webseite-->
+		
+	    <p>Der hier zu sehende "Engel" wurde versucht mit möglichst viel Tiefe darzustellen. Alle Bestandteile wurden aus den Grundkörpern Kegel, Kugeln und Torus hergestellt.</p>
+		<p>Ich war mir bei der Umsetzung mit den Grautönen nicht ganz sicher, daher habe ich das Modell in Farbe als Bild nochmal als Vergleich daneben gepackt. Hier sieht man die Körper auch nochmal besser.</p>
+		<p>Der Engel kann aus verschiedenen Perspektiven betrachtet sowie gedreht werden. Die jeweilligen Tasten sind unter dem Canvas aufgezählt.</p>
+		
+	<div class="container"><!--Hier wird der Container für das Nebeneinander-Anordnen des Canvas und des img-Elementes erstellt-->
+		<div class="canvas-container"> <!--Hier ist das Canvas definiert-->
+		<canvas id="canvas" width="800" height="500"></canvas>
+		<p class="item-text">Modell "Der Engel" in Graustufen</p>
+		</div>
+		<div class="item">
+            <img src="Farbe.png" alt="Hier sollte das Modell in Farbe zu sehen sein." />
+            <p class="item-text">Modell aus Grundkörpern in Farbe</p>
+        </div>
+        </div>
+	</div>
+		<p>Folgende Tasten lassen sich betätigen:</p> <!--Hier sind weitere Hinweise für die Benutzung-->
+		<p>[Pfeiltasten] - Drehung der Kamera um die Modelle</p>
+		<p>[D] - heran-/heraus-zoomen   [A] - starker Zoom der Kamera  [H] - Kamera in der Höhe herauszoomen  [S] - Kamera in der Höhe heranzoomen</p>
+		
+		<footer><!--Im Footer befinden sich die Aufgabenstellung sowie Angaben zu den verwendeten Ressourcen-->
+			<h3>Aufgabenstellung:</h3>
+			<p> Erstellen Sie eine Szene aus mindestens drei Grundkörpern dar, die einander überschneiden, damit man ihre relative Lage besser einschätzen kann. Stellen Sie den Tiefen-Buffer (Z-Buffer), das heißt die Z-Werte der Fragmente im Framebuffer, als Graustufen dar. Die Fragmente, die in Z-Richtung näher an der Kamera sind, sollen dunkler dargestellt werden. In der Szene soll möglichst viel Tiefe erzeugt werden, sodass der Effekt deutlich wird. </p>
+			<p>Modul Graphical Visualisation Technologies</p>
+			<p>Verwendete Ressourcen: w3school, Bücherreihe "for dummies" für HTML/CSS & JavaScript, Das Skript</p>
+			<p>Erstellt am 27.11.2023</p>
+		</footer>
+	</body>
+</html>
