@@ -1,0 +1,150 @@
+<!DOCTYPE html> <!--START-->
+<html lang="de"> <!--EA8 - Lichter auf Kreisbahn mit Toon Shading-->
+<head> 
+    <meta charset="UTF-8"> <!--Hier wird der Zeichensatz für das Dokument festgelegt-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"><!--Dies gestaltet die Webseite responsiv auf den Endgeräten-->
+    <title>Lichter auf Kreisbahn mit Toon Shading von Maxi Gutmann</title><!--Das ist der Titel des Dokumentes-->
+    <link rel="stylesheet" href="styles.css"><!--An dieser Stelle wird die CSS-Datei in die HTML-Datei eingebunden-->
+		<script src="ext/gl-matrix.js"></script>
+		<script src="plane.js"></script>
+		<script src="kugeln.js"></script>
+		<script src="torus.js"></script>
+		<script src="script.js"></script>
+		<!--Hier wird der Vertex-Shader initialsiert-->
+		<script type="x-shader/x-vertex" id="vertexshader">
+			attribute vec3 aPosition;
+			attribute vec3 aNormal;
+
+			uniform mat4 uPMatrix;
+			uniform mat4 uMVMatrix;
+			uniform mat3 uNMatrix;
+			uniform vec3 uCameraPosition; // Kameraposition
+
+			varying vec4 vColor;
+			varying vec3 vViewDirection; // Varying für die Blickrichtung
+
+						
+			// Ambient light.
+			uniform vec3 ambientLight;
+			
+			// Pointlights.
+			const int MAX_LIGHT_SOURCES = 8;
+			struct LightSource {
+				bool isOn;
+				vec3 position;
+				vec3 color;
+			};
+			uniform LightSource light[MAX_LIGHT_SOURCES];
+			
+			// Material.
+			struct PhongMaterial {
+				vec3 ka;
+				vec3 kd;
+				vec3 ks;
+				float ke; 
+			};
+			uniform PhongMaterial material;
+			
+			vec3 phong(vec3 p, vec3 n, vec3 v, LightSource l) {
+				
+				vec3 L = l.color;
+			
+				vec3 s = normalize(l.position - p);
+				vec3 r = reflect(-s, n);
+				
+				float sn = max( dot(s,n), 0.0);
+				float rv = max( dot(r,v), 0.0);
+							
+				vec3 diffuse = material.kd * L * sn;
+								
+				vec3 specular = material.ks * L * pow(rv, material.ke);
+			
+				return diffuse + specular;			
+			
+			}
+			
+			// Phong illumination for multiple light sources
+			vec3 phong(vec3 p, vec3 n, vec3 v) {
+			
+				// Calculate ambient light.
+				vec3 result = material.ka * ambientLight;
+				
+				// Add light from all light sources.
+				for(int j=0; j < MAX_LIGHT_SOURCES; j++){
+					if(light[j].isOn){
+						result += phong(p, n, v, light[j]);
+					}
+				}
+				return result;
+			}
+			
+			void main(){
+				// Calculate vertex position in eye coordinates. 
+				vec4 tPosition = uMVMatrix * vec4(aPosition, 1.0);
+				// Calculate projektion.
+				gl_Position = uPMatrix * tPosition;
+			
+				vec3 tNormal = normalize(uNMatrix * aNormal);
+				// Berechnung der Blickrichtung
+				vec4 worldPosition = uMVMatrix * vec4(aPosition, 1.0);
+				vViewDirection = normalize(uCameraPosition - worldPosition.xyz);
+				
+				// Calculate view vector.
+				vec3 v = normalize(-tPosition.xyz);	
+								
+				vColor = vec4( phong(tPosition.xyz, tNormal, v), 1.0);
+			}
+		</script>
+		<!--Hier wird der Fragment-Shader initialsiert-->
+		<script type="x-shader/x-fragment" id="fragmentshader">
+		precision mediump float;
+
+		varying vec4 vColor;
+
+		void main() {
+			// Einfache Umsetzung für Toon-Shading
+			float intensity = dot(normalize(vColor.xyz), vec3(0.0, 0.0, 1.0));
+			if (intensity > 0.95) {
+				intensity = 1.0;
+			} else if (intensity > 0.5) {
+				intensity = 0.8;
+			} else if (intensity > 0.25) {
+				intensity = 0.5;
+			} else {
+				intensity = 0.3;
+			}
+			vec4 toonColor = vec4(intensity * vColor.rgb, vColor.a);
+			gl_FragColor = toonColor;
+		}
+		</script>
+	</head>
+	<body onload="app.start()">
+		<header><!--Hier wird die Kopfzeile definiert mit dem Titel und meinem Namen-->
+			<h1>EA 8 - Lichter auf Kreisbahn mit Toon Shading</h1>
+			<p><b>Ein Projekt von Maxi Gutmann</b></p>
+			<br>
+		</header>
+		 <!--Hier sind ersteinmal ein paar allgemeine Hinweise für den Nutzer der Webseite-->
+		
+	    <p>In der Szene wurden zwei Lichtquellen implementiert, welche mittels der Taste [L] um die Szene gedreht werden können.</p>
+		<p>Ich war mir bei der Umsetzung mit dem Toon-Shading nicht sicher, ob dies schon als solches zählt, aber besser hab ich es leider nicht hinbekommen.</p>
+		<p>Die Szene kann aus verschiedenen Perspektiven betrachtet sowie gedreht werden. Die jeweilligen Tasten sind unter dem Canvas aufgezählt.</p>
+		
+		<div class="canvas-container"> <!--Hier ist das Canvas bzw. dessen Container definiert-->
+		   <canvas id="canvas" width="800" height="500"></canvas>
+		</div>
+
+		<p>Folgende Tasten lassen sich betätigen:</p> <!--Hier sind weitere Hinweise für die Benutzung-->
+		<p>[C] - Drehung der Kamera um die Modelle  [L] - Drehung der Lichtquellen um die Modelle</p>
+		<p>[D] - heran-/heraus-zoomen  [H] - Kamera in der Höhe verändern  [S] - Torus scalieren</p>
+		<p>[X] - Torus um X-Achse drehen  [Y] - Torus um Y-Achse drehen [Z] - Torus um Z-Achse drehen</p>
+		
+		<footer><!--Im Footer befinden sich die Aufgabenstellung sowie Angaben zu den verwendeten Ressourcen-->
+			<h3>Aufgabenstellung:</h3>
+			<p>Erweitern Sie die Aufgabe Bel-3 (oder Bel-2 in schwarz-weiß) aus der Lerneinheit BEL (Kap.14.9).  Auf einen Tastendruck sollen sich die beiden Lichter in der Szene gleichzeitig auf einer Kreisbahn um die Modelle bewegen. Sie bewegen sich unabhängig von der Kamera (nicht wie ein Licht, das fest auf der Kamera montiert ist). </p>
+			<p>Modul Graphical Visualisation Technologies</p>
+			<p>Verwendete Ressourcen: w3school, Bücherreihe "for dummies" für HTML/CSS & JavaScript, Das Skript</p>
+			<p>Erstellt am 12.12.2023</p>
+		</footer>
+	</body>
+</html>
